@@ -40,6 +40,7 @@ const CarouselArrow = styled.div<{
 
 type TypeOptions = {
   autoPlay?: boolean;
+  delay?: number;
 };
 
 type CarouselProps = {
@@ -49,6 +50,7 @@ type CarouselProps = {
 
 const defaultOptions: TypeOptions = {
   autoPlay: false,
+  delay: 1000,
 };
 const Carousel = ({
   children: childrenProps,
@@ -58,7 +60,7 @@ const Carousel = ({
     ? childrenProps
     : [childrenProps];
 
-  const { autoPlay } = options;
+  const { autoPlay, delay } = options;
 
   const [curIdx, setCurIdx] = useState(0);
 
@@ -72,11 +74,11 @@ const Carousel = ({
             return 0;
           }
         });
-      }, 1000);
+      }, delay);
 
       return () => clearInterval(interval);
     }
-  }, [autoPlay, children.length]);
+  }, [autoPlay, children.length, delay]);
   return (
     <CarouselContainer>
       <CarouselArrow

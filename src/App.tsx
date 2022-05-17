@@ -8,6 +8,7 @@ function App() {
       <Carousel
         options={{
           autoPlay: true,
+          delay: 2000,
         }}
       >
         <h1>1</h1>
