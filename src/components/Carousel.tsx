@@ -68,12 +68,15 @@ const CarouselNavigation = styled.div`
   gap: 10px;
 `;
 
-const Dot = styled.div`
+const Dot = styled.div<{
+  selected: boolean;
+}>`
   border: 1px solid black;
   border-radius: 999px;
   width: 12px;
   height: 12px;
 
+  background-color: ${({ selected }) => (selected ? "black" : "transparent")};
   cursor: pointer;
 
   &:hover {
@@ -184,6 +187,7 @@ const Carousel = ({
               return (
                 <Dot
                   key={index}
+                  selected={curIdx === index}
                   onClick={() => {
                     setCurIdx(index);
                   }}
