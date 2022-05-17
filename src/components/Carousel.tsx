@@ -3,9 +3,11 @@ import styled from "styled-components";
 
 const CarouselContainer = styled.div<{
   direction?: "row" | "column";
+  width?: string;
+  height?: string;
 }>`
-  width: 500px;
-  height: 500px;
+  max-width: ${({ width }) => width};
+  max-height: ${({ height }) => height};
   background-color: #222;
   display: flex;
   flex-direction: ${({ direction }) => direction};
@@ -17,9 +19,12 @@ const CarouselItem = styled.div<{
   curIdx: number;
   transitionTime?: number;
   direction?: "row" | "column";
+  width?: string;
+  height?: string;
 }>`
-  min-width: 500px;
-  min-height: 500px;
+  min-width: ${({ width }) => width};
+  min-height: ${({ height }) => height};
+  overflow: hidden;
 
   transition: transform ${({ transitionTime }) => transitionTime}ms;
   transform: ${({ curIdx, direction }) =>
@@ -84,6 +89,11 @@ const Dot = styled.div<{
   }
 `;
 
+type TypeStyles = {
+  width: string;
+  height: string;
+};
+
 type TypeOptions = {
   autoPlay?: boolean;
   delay?: number;
@@ -95,7 +105,13 @@ type TypeOptions = {
 
 type CarouselProps = {
   children: ReactNode | ReactNode[];
+  styles: TypeStyles;
   options: TypeOptions;
+};
+
+const defaultStyles: TypeStyles = {
+  width: "100%",
+  height: "fit-content",
 };
 
 const defaultOptions: TypeOptions = {
@@ -108,6 +124,7 @@ const defaultOptions: TypeOptions = {
 };
 const Carousel = ({
   children: childrenProps,
+  styles = defaultStyles,
   options = defaultOptions,
 }: CarouselProps) => {
   const children = Array.isArray(childrenProps)
@@ -135,7 +152,11 @@ const Carousel = ({
     }
   }, [autoPlay, children.length, delay]);
   return (
-    <CarouselContainer direction={direction}>
+    <CarouselContainer
+      direction={direction}
+      width={styles.width}
+      height={styles.height}
+    >
       <CarouselArrow
         arrow="left"
         direction={direction}
@@ -158,6 +179,8 @@ const Carousel = ({
             curIdx={curIdx}
             transitionTime={transitionTime}
             direction={direction}
+            width={styles.width}
+            height={styles.height}
           >
             {child}
           </CarouselItem>
