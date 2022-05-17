@@ -41,6 +41,7 @@ const CarouselArrow = styled.div<{
 type TypeOptions = {
   autoPlay?: boolean;
   delay?: number;
+  loop?: boolean;
 };
 
 type CarouselProps = {
@@ -51,6 +52,7 @@ type CarouselProps = {
 const defaultOptions: TypeOptions = {
   autoPlay: false,
   delay: 1000,
+  loop: false,
 };
 const Carousel = ({
   children: childrenProps,
@@ -60,7 +62,7 @@ const Carousel = ({
     ? childrenProps
     : [childrenProps];
 
-  const { autoPlay, delay } = options;
+  const { autoPlay, delay, loop } = options;
 
   const [curIdx, setCurIdx] = useState(0);
 
@@ -84,7 +86,13 @@ const Carousel = ({
       <CarouselArrow
         direction="left"
         onClick={() => {
-          if (curIdx > 0) setCurIdx((prevIdx) => prevIdx - 1);
+          if (curIdx > 0) {
+            setCurIdx((prevIdx) => prevIdx - 1);
+          } else {
+            if (loop) {
+              setCurIdx(children.length - 1);
+            }
+          }
         }}
       >
         {"<"}
@@ -100,7 +108,13 @@ const Carousel = ({
       <CarouselArrow
         direction="right"
         onClick={() => {
-          if (curIdx < children.length - 1) setCurIdx((prevIdx) => prevIdx + 1);
+          if (curIdx < children.length - 1) {
+            setCurIdx((prevIdx) => prevIdx + 1);
+          } else {
+            if (loop) {
+              setCurIdx(0);
+            }
+          }
         }}
       >
         {">"}
