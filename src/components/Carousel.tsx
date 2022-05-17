@@ -1,34 +1,52 @@
 import { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components";
 
-const CarouselContainer = styled.div`
+const CarouselContainer = styled.div<{
+  direction?: "row" | "column";
+}>`
   width: 500px;
   height: 500px;
   background-color: #222;
   display: flex;
+  flex-direction: ${({ direction }) => direction};
   overflow: hidden;
   position: relative;
 `;
 
 const CarouselItem = styled.div<{
   curIdx: number;
+  transitionTime?: number;
+  direction?: "row" | "column";
 }>`
   min-width: 500px;
   min-height: 500px;
 
-  transition: transform 0.5s;
-  transform: ${({ curIdx }) => `translate(${-curIdx * 100}%)`};
+  transition: transform ${({ transitionTime }) => transitionTime}ms;
+  transform: ${({ curIdx, direction }) =>
+    direction === "row"
+      ? `translateX(${-curIdx * 100}%)`
+      : `translateY(${-curIdx * 100}%)`};
 `;
 
 const CarouselArrow = styled.div<{
-  direction: "left" | "right";
+  arrow: "left" | "right";
+  direction?: "row" | "column";
 }>`
   width: 50px;
   height: 50px;
   position: absolute;
-  top: calc(50% - 50px);
-  ${({ direction }) => direction === "left" && "left: 0"};
-  ${({ direction }) => direction === "right" && "right: 0"};
+  ${({ direction, arrow }) =>
+    direction === "row"
+      ? arrow === "left"
+        ? "top: calc(50% - 50px); left: 0;"
+        : "top: calc(50% - 50px); right: 0;"
+      : arrow === "left"
+      ? "left: calc(50% - 50px); top: 0;"
+      : "left: calc(50% - 50px); bottom: 0;"}
+
+  ${({ direction }) => direction === "column" && "transform: rotate(90deg);"}
+
+  
   z-index: 999;
   font-size: 32px;
   cursor: pointer;
@@ -42,6 +60,8 @@ type TypeOptions = {
   autoPlay?: boolean;
   delay?: number;
   loop?: boolean;
+  transitionTime?: number;
+  direction?: "row" | "column";
 };
 
 type CarouselProps = {
@@ -53,6 +73,8 @@ const defaultOptions: TypeOptions = {
   autoPlay: false,
   delay: 1000,
   loop: false,
+  transitionTime: 500,
+  direction: "row",
 };
 const Carousel = ({
   children: childrenProps,
@@ -62,7 +84,7 @@ const Carousel = ({
     ? childrenProps
     : [childrenProps];
 
-  const { autoPlay, delay, loop } = options;
+  const { autoPlay, delay, loop, transitionTime, direction } = options;
 
   const [curIdx, setCurIdx] = useState(0);
 
@@ -82,9 +104,10 @@ const Carousel = ({
     }
   }, [autoPlay, children.length, delay]);
   return (
-    <CarouselContainer>
+    <CarouselContainer direction={direction}>
       <CarouselArrow
-        direction="left"
+        arrow="left"
+        direction={direction}
         onClick={() => {
           if (curIdx > 0) {
             setCurIdx((prevIdx) => prevIdx - 1);
@@ -99,14 +122,20 @@ const Carousel = ({
       </CarouselArrow>
       {children.map((child, index) => {
         return (
-          <CarouselItem curIdx={curIdx} key={index}>
+          <CarouselItem
+            key={index}
+            curIdx={curIdx}
+            transitionTime={transitionTime}
+            direction={direction}
+          >
             {child}
           </CarouselItem>
         );
       })}
 
       <CarouselArrow
-        direction="right"
+        arrow="right"
+        direction={direction}
         onClick={() => {
           if (curIdx < children.length - 1) {
             setCurIdx((prevIdx) => prevIdx + 1);

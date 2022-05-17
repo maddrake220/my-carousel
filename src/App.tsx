@@ -10,6 +10,8 @@ function App() {
           autoPlay: true,
           delay: 3000,
           loop: true,
+          transitionTime: 500,
+          direction: "column",
         }}
       >
         <h1>1</h1>
