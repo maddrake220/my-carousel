@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components";
 
 const CarouselContainer = styled.div`
@@ -46,13 +46,37 @@ type CarouselProps = {
   children: ReactNode | ReactNode[];
   options: TypeOptions;
 };
-const Carousel = ({ children: childrenProps }: CarouselProps) => {
+
+const defaultOptions: TypeOptions = {
+  autoPlay: false,
+};
+const Carousel = ({
+  children: childrenProps,
+  options = defaultOptions,
+}: CarouselProps) => {
   const children = Array.isArray(childrenProps)
     ? childrenProps
     : [childrenProps];
 
+  const { autoPlay } = options;
+
   const [curIdx, setCurIdx] = useState(0);
 
+  useEffect(() => {
+    if (autoPlay) {
+      const interval = setInterval(() => {
+        setCurIdx((prevIdx) => {
+          if (prevIdx < children.length - 1) {
+            return prevIdx + 1;
+          } else {
+            return 0;
+          }
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [autoPlay, children.length]);
   return (
     <CarouselContainer>
       <CarouselArrow
