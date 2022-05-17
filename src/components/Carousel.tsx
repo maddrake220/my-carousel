@@ -56,12 +56,38 @@ const CarouselArrow = styled.div<{
   justify-content: center;
 `;
 
+const CarouselNavigation = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+`;
+
+const Dot = styled.div`
+  border: 1px solid black;
+  border-radius: 999px;
+  width: 12px;
+  height: 12px;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: black;
+  }
+`;
+
 type TypeOptions = {
   autoPlay?: boolean;
   delay?: number;
   loop?: boolean;
   transitionTime?: number;
   direction?: "row" | "column";
+  navigation?: boolean;
 };
 
 type CarouselProps = {
@@ -75,6 +101,7 @@ const defaultOptions: TypeOptions = {
   loop: false,
   transitionTime: 500,
   direction: "row",
+  navigation: false,
 };
 const Carousel = ({
   children: childrenProps,
@@ -84,7 +111,8 @@ const Carousel = ({
     ? childrenProps
     : [childrenProps];
 
-  const { autoPlay, delay, loop, transitionTime, direction } = options;
+  const { autoPlay, delay, loop, transitionTime, direction, navigation } =
+    options;
 
   const [curIdx, setCurIdx] = useState(0);
 
@@ -148,6 +176,22 @@ const Carousel = ({
       >
         {">"}
       </CarouselArrow>
+      {navigation && (
+        <CarouselNavigation>
+          {Array(children.length)
+            .fill(1)
+            .map((_, index) => {
+              return (
+                <Dot
+                  key={index}
+                  onClick={() => {
+                    setCurIdx(index);
+                  }}
+                />
+              );
+            })}
+        </CarouselNavigation>
+      )}
     </CarouselContainer>
   );
 };

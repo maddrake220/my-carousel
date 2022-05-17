@@ -11,7 +11,8 @@ function App() {
           delay: 3000,
           loop: true,
           transitionTime: 500,
-          direction: "column",
+          direction: "row",
+          navigation: true,
         }}
       >
         <h1>1</h1>
